@@ -3,10 +3,10 @@ ion-menu ion-content {
 }
 
 ion-menu.md ion-content {
-  --padding-start: 8px;
-  --padding-end: 8px;
-  --padding-top: 20px;
-  --padding-bottom: 20px;
+  --padding-start: 0px;
+  --padding-end: 0px;
+  --padding-top: 0px;
+  --padding-bottom: 0px;
 }
 
 ion-menu.md ion-list {
@@ -22,15 +22,22 @@ ion-menu.md ion-note {
   padding-left: 10px;
 }
 
-ion-menu.md ion-list#inbox-list {
-  border-bottom: 1px solid var(--ion-background-color-step-150, #d7d8da);
-}
-
 ion-menu.md ion-list#inbox-list ion-list-header {
   font-size: 22px;
   font-weight: 600;
 
   min-height: 20px;
+
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  // background-color: red;
+}
+
+ion-split-pane {
+  --side-width: 250px;
+  --side-max-width: 250px;
+  --border: 2px solid #ccc;
 }
 
 ion-menu.md ion-list#labels-list ion-list-header {
@@ -66,7 +73,10 @@ ion-menu.md ion-item ion-label {
 }
 
 ion-menu.ios ion-content {
-  --padding-bottom: 20px;
+  --padding-start: 0px;
+  --padding-end: 0px;
+  --padding-top: 0px;
+  --padding-bottom: 0px;
 }
 
 ion-menu.ios ion-list {
@@ -116,4 +126,60 @@ ion-note {
 
 ion-item.selected {
   --color: var(--ion-color-primary);
+}
+
+//
+ion-menu-toggle {
+  overflow-y: auto;
+}
+
+.footer {
+  width: 100%;
+  height: fit-content;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+
+  span {
+    flex: 1;
+    font-size: 12px;
+    color: var(--ion-color-tertiary);
+  }
+
+  ion-icon {
+    width: 25px;
+    height: 20px;
+    cursor: pointer;
+  }
+}
+
+ion-menu-toggle ion-avatar {
+  // --border-radius: 4px;
+  margin-right: 5px;
+}
+//
+ion-toolbar.toolbar {
+  --background: #fff;
+  --min-height: 56px;
+  --padding-bottom: 0px;
+  --padding-end: 0px;
+  --padding-start: 0px;
+  --padding-top: 0px;
+  max-height: 56px;
+  position: relative;
+  ion-menu-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    --box-shadow: 0px 0px;
+  }
+  ion-title {
+    text-align: center;
+    font-weight: 600;
+    font-size: 18px;
+  }
 }

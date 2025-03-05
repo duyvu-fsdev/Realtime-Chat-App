@@ -1,0 +1,29 @@
+// Add styles for the conversation page
+ion-content {
+  padding: 16px;
+}
+
+p {
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+}
+
+ion-col ion-card {
+  cursor: pointer;
+  ion-label {
+    margin: 0;
+  }
+}
+
+.fixed-searchbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: white;
+}
+
+.scrollable-content {
+  height: calc(100vh - 300px); // Adjust this value as needed
+  overflow-y: auto;
+}

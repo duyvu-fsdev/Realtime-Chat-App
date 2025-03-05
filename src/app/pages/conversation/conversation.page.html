@@ -1,0 +1,35 @@
+<app-toolbar title="Welcome"></app-toolbar>
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Welcome to the Realtime Chat App</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Start chatting with your friends in real-time!</p>
+    </ion-card-content>
+  </ion-card>
+  <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterFriends()" class="fixed-searchbar"></ion-searchbar>
+  <ion-content class="scrollable-content">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-md="6" size-lg="4" *ngFor="let friend of filteredUser">
+          <ion-card (click)="startConversation(friend.id)">
+            <ion-card-content>
+              <ion-item lines="none">
+                <ion-avatar slot="start">
+                  <img [src]="friend.avatar" />
+                </ion-avatar>
+                <ion-label>
+                  <p><strong>{{ friend.name }}</strong></p>
+                  @if (!!searchTerm) {
+                  <p>{{ friend.isFriend ? 'is friend' : 'is not friend' }}</p>
+                  }
+                </ion-label>
+              </ion-item>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-content>
+</ion-content>

@@ -1,0 +1,39 @@
+<ion-header>
+  <app-toolbar [title]="conversation?.name"></app-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    @for (m of messages; track $index) {
+    <ion-item
+      lines="none"
+      [ngClass]="{
+        'my-message': m?.senderId === account.userTest.id,
+        'other-message': m?.senderId !== account.userTest.id,
+        'firstMess': $index && (messages[$index - 1]?.senderId !== m?.senderId && ($index < messages.length - 1 && messages[$index + 1]?.senderId === m?.senderId)),
+        'midMess': $index  && messages[$index - 1]?.senderId === m?.senderId && ($index < messages.length - 1 && messages[$index + 1]?.senderId === m?.senderId),
+        'lastMess': $index && messages[$index - 1]?.senderId === m?.senderId && ($index === messages.length - 1 || messages[$index + 1]?.senderId !== m?.senderId)
+      }"
+    >
+      <div class="avatar-block">
+        <ion-avatar
+          slot="start"
+          *ngIf="m?.senderId !== account.user.id && ($index === 0 || messages[$index - 1]?.senderId !== m?.senderId)"
+        >
+          <img src="https://www.w3schools.com/howto/img_avatar.png" />
+        </ion-avatar>
+      </div>
+      <div class="ion-label"><p>{{m?.content}}</p></div>
+    </ion-item>
+    }
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-item lines="none">
+      <ion-input [(ngModel)]="newMessage" placeholder="New message"></ion-input>
+      <ion-button (click)="sendMessage()">Send</ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

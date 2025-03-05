@@ -1,0 +1,40 @@
+<ion-content>
+  <div class="wrap">
+    <background style="opacity: 0.05"></background>
+    <auth-toolbar title="Login"></auth-toolbar>
+    <form [formGroup]="form" (submit)="submit()">
+      <ion-list>
+        <ion-item>
+          <ion-input labelPlacement="floating" formControlName="email" type="email" placeholder="youremail@domain.com">
+            <div slot="label">
+              Email @if (isError('email','required')) {
+              <ion-text color="danger"> {{'is required'|translate}} </ion-text>
+              } @else if (isError('email','email')) {
+              <ion-text color="danger"> {{'is invalid'|translate}} </ion-text>
+              }
+            </div>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input labelPlacement="floating" formControlName="password" type="password" placeholder="••••••">
+            <div slot="label">
+              {{'Password'|translate}} @if (isError('password','required')) {
+              <ion-text color="danger"> {{'is required'|translate}} </ion-text>
+              }
+            </div>
+          </ion-input>
+        </ion-item>
+      </ion-list>
+      <ion-button [disabled]="form.invalid" type="submit" expand="block" color="tertiary">
+        {{'Login'|translate}}
+      </ion-button>
+      <ion-button (click)="goToPage('auth/forgot-password')" expand="block" fill="clear" color="tertiary">
+        {{'Forgot password'|translate}}
+      </ion-button>
+      <p style="position: relative; z-index: 10">
+        {{"Don't have an account yet ?"|translate}}
+        <a (click)="goToPage('auth/register')">{{'Register'|translate}}</a>
+      </p>
+    </form>
+  </div>
+</ion-content>

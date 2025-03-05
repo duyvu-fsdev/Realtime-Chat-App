@@ -1,0 +1,139 @@
+<ion-content>
+  <div class="wrap">
+    <background style="opacity: 0.05"></background>
+    <auth-toolbar title="Register"></auth-toolbar>
+    <form [formGroup]="form" (submit)="submit();s()">
+      @if (!isReqRegister) {
+      <ion-list>
+        <ion-item>
+          <ion-input
+            [value]="email"
+            labelPlacement="floating"
+            formControlName="email"
+            type="email"
+            placeholder="youremail@domain.com"
+          >
+            <div slot="label">
+              Email @if (isError('email','required')) {
+              <ion-text color="danger"> {{'is required'|translate}} </ion-text>
+              } @else if ( isError('email','email')) {
+              <ion-text color="danger"> {{'is invalid'|translate}} </ion-text>
+              }
+            </div>
+          </ion-input>
+        </ion-item>
+      </ion-list>
+      } @else {
+      <ion-list>
+        <ion-item>
+          <ion-input readonly="true" labelPlacement="floating" formControlName="email" type="email">
+            <div slot="label">
+              Email @if (isError('email','required')) {
+              <ion-text color="danger"> {{'is required'|translate}} </ion-text>
+              } @else if ( isError('email','email')) {
+              <ion-text color="danger"> {{'is invalid'|translate}} </ion-text>
+              }
+            </div>
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input
+            labelPlacement="floating"
+            formControlName="firstName"
+            type="text"
+            placeholder="John"
+            value="{{form.value.firstName | titlecase}}"
+          >
+            <div slot="label">
+              {{'First name'|translate}} @if (isError('firstName','required')) {
+              <ion-text color="danger"> {{'is required'|translate}} </ion-text>
+              } @else if (isError('firstName','maxlength')) {
+              <ion-text color="danger"> {{'is invalid'|translate}} </ion-text>
+              }
+            </div>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input
+            labelPlacement="floating"
+            formControlName="lastName"
+            type="text"
+            placeholder="Smith"
+            value="{{form.value.lastName | titlecase}}"
+          >
+            <div slot="label">
+              {{'Last name'|translate}} @if (isError('lastName','required')) {
+              <ion-text color="danger"> {{'is required'|translate}} </ion-text>
+              } @else if (isError('lastName','maxlength')) {
+              <ion-text color="danger"> {{'is invalid'|translate}} </ion-text>
+              }
+            </div>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-select
+            label="{{'Gender'|translate}}"
+            label-placement="floating"
+            formControlName="gender"
+            interface="action-sheet"
+            cancelText="{{'Cancel'|translate |titlecase}}"
+            acc
+          >
+            <ion-select-option value="male">{{'male'|translate |titlecase}}</ion-select-option>
+            <ion-select-option value="female">{{'female'|translate |titlecase}}</ion-select-option>
+            <ion-select-option value="other">{{'other'|translate |titlecase}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-input labelPlacement="floating" formControlName="password" type="password" placeholder="••••••">
+            <div slot="label">
+              {{'Password'|translate}} @if( isError('password','required') ) {
+              <ion-text color="danger"> {{'is required'|translate}} </ion-text>
+              } @else if (isError('password','minlength')) {
+              <ion-text color="danger"> {{'must be at least 6 characters'|translate}} </ion-text>
+              }
+            </div>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input labelPlacement="floating" formControlName="confirmPassword" type="password" placeholder="••••••">
+            @if ( isError('confirmPassword','passwordMismatch')) {
+            <div slot="label">
+              <ion-text color="danger"> {{'Confirm password does not match'|translate}} </ion-text>
+            </div>
+            }@else {
+            <div slot="label">
+              {{'Confirm password'|translate}} @if( isError('confirmPassword','required') ) {
+              <ion-text color="danger"> {{'is required'|translate}} </ion-text> } @else if
+              (isError('confirmPassword','minlength') ) {
+              <ion-text color="danger"> {{'must be at least 6 characters'|translate}} </ion-text> }
+            </div>
+            }
+          </ion-input>
+        </ion-item>
+        <span>{{'The OTP has been sent to your email.'| translate}}</span>
+        <ion-item>
+          <ion-input type="number" labelPlacement="floating" formControlName="otp" type="otp">
+            <div slot="label">
+              OTP @if (isError('otp','required')) {
+              <ion-text color="danger"> {{'is required'|translate}} </ion-text>
+              } @else if ( isError('otp','pattern')) {
+              <ion-text color="danger"> {{'is invalid'|translate}} </ion-text>
+              }
+            </div>
+          </ion-input>
+          <ion-button (click)="getAnotherOtp()" expand="block" color="tertiary">
+            {{'Get new OTP'|translate}}
+          </ion-button>
+        </ion-item>
+      </ion-list>
+      }
+
+      <ion-button [disabled]="form.invalid" type="submit" expand="block" color="tertiary">
+        @if (isReqRegister) { {{'Register'|translate}} } @else { {{'Continue'|translate}}}
+      </ion-button>
+    </form>
+  </div>
+</ion-content>

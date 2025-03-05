@@ -1,33 +1,59 @@
 <ion-app>
+  @if (isLoaded) { @if (account.userTest.id) {
   <ion-split-pane contentId="main-content">
     <ion-menu contentId="main-content" type="overlay">
       <ion-content>
         <ion-list id="inbox-list">
-          <ion-list-header>Inbox</ion-list-header>
-          <ion-note>hi&#64;ionicframework.com</ion-note>
+          <ion-list-header>
+            <ion-avatar>
+              <img [alt]="account.userTest.name" src="https://www.w3schools.com/howto/img_avatar.png" />
+            </ion-avatar>
+            <div style="display: flex; flex-direction: column; justify-content: space-around; height: 100%; margin-left: 10px">
+              <h4 style="margin: 0">{{ account.userTest.name }}</h4>
+            </div>
+          </ion-list-header>
 
-          @for (p of appPages; track p; let i = $index) {
-            <ion-menu-toggle auto-hide="false">
-              <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
-                <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
-                <ion-label>{{ p.title }}</ion-label>
-              </ion-item>
-            </ion-menu-toggle>
-          }
-        </ion-list>
-
-        <ion-list id="labels-list">
-          <ion-list-header>Labels</ion-list-header>
-
-          @for (label of labels; track label) {
-            <ion-item lines="none">
-              <ion-icon aria-hidden="true" slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
-              <ion-label>{{ label }}</ion-label>
+          @for (c of conversations; track c) {
+          <ion-menu-toggle auto-hide="false">
+            <ion-item
+              routerDirection="root"
+              [routerLink]="['/conversations/' + c.id]"
+              lines="none"
+              detail="false"
+              routerLinkActive="selected"
+            >
+              <ion-avatar>
+                <img [alt]="account.userTest.name" src="https://www.w3schools.com/howto/img_avatar.png" />
+              </ion-avatar>
+              <ion-label>{{ c.name }}</ion-label>
             </ion-item>
+          </ion-menu-toggle>
+          }@empty {
+          <ion-item lines="none">
+            <ion-label> No conversation </ion-label>
+          </ion-item>
           }
         </ion-list>
       </ion-content>
     </ion-menu>
-    <ion-router-outlet id="main-content"></ion-router-outlet>
+    <ion-router-outlet id="main-content"> </ion-router-outlet>
   </ion-split-pane>
+  }@else {
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+  @if (actionSheetButtons) {
+  <div class="footer">
+    <span> v.1.0.15 </span>
+    <ion-icon id="open-action-sheet" [src]="currentLang == 'en-US' ? 'assets/icon/us.svg' : 'assets/icon/vn.svg'"> </ion-icon>
+    <ion-action-sheet
+      trigger="open-action-sheet"
+      [buttons]="actionSheetButtons"
+      (didDismiss)="changeLanguage($event.detail)"
+      class="custom-action-sheet"
+    >
+    </ion-action-sheet>
+  </div>
+  } } } @else {
+  <ion-router-outlet id="main-content" style="opacity: 0"></ion-router-outlet>
+  <background style="opacity: 0.5"></background>
+  }
 </ion-app>

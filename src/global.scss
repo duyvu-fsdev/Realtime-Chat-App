@@ -34,4 +34,92 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+// @import "@ionic/angular/css/palettes/dark.system.css";
+
+@import "./theme/variables.scss";
+
+* {
+  box-sizing: border-box;
+  font-family: "Spectral", serif;
+  user-select: none;
+}
+
+.flex-r-center {
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-c-center {
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+a {
+  cursor: pointer;
+}
+
+ion-loading.custom-loading {
+  .loading-wrapper.ion-overlay-wrapper {
+    border-radius: 30px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  &.none-content {
+    .loading-content {
+      display: none;
+    }
+  }
+}
+
+ion-action-sheet.custom-action-sheet .action-sheet-group {
+  button {
+    & + button {
+      border-top: 1px solid rgba(var(--ion-color-tertiary-rgb), 0.1);
+    }
+    &:disabled {
+      opacity: 0.8;
+      --button-color-disabled: var(--ion-color-tertiary);
+      --button-background: rgba(var(--ion-color-tertiary-rgb), 0.1);
+    }
+  }
+}
+
+ion-action-sheet.select-action-sheet .action-sheet-group {
+  button {
+    border-bottom: 1px solid rgba(var(--ion-color-tertiary-rgb), 0.1);
+    &.action-sheet-selected {
+      opacity: 0.8;
+      --button-color-selected: var(--ion-color-tertiary);
+      --button-background: rgba(var(--ion-color-tertiary-rgb), 0.1);
+      pointer-events: none;
+    }
+    span {
+      justify-content: center;
+    }
+  }
+}
+
+// scrollbar
+
+ion-content::part(scroll)::-webkit-scrollbar {
+  width: 6px;
+}
+
+ion-content::part(scroll)::-webkit-scrollbar-thumb {
+  border-radius: 0px;
+  background: #88888890;
+  // background: linear-gradient(#30353c, #2a2e34);
+  border: none;
+}
+
+ion-content::part(scroll)::-webkit-scrollbar-track {
+  background: #eee;
+}
+
+ion-content::part(scroll)::-webkit-scrollbar-thumb:hover {
+  background: rgb(136, 136, 136);
+}

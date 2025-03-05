@@ -1,0 +1,100 @@
+// Add styles for the conversation page
+ion-content {
+  padding: 16px;
+}
+
+p {
+  font-size: 16px;
+  color: #333;
+}
+
+.my-message,
+.other-message {
+  width: 100%;
+  --min-height: 40px;
+  .avatar-block {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+  }
+  ion-avatar {
+    width: 20px;
+    height: 20px;
+  }
+  .ion-label {
+    width: 100%;
+    display: inline-flex; /* Thêm display: inline-block */
+    // max-width: 80%;
+    margin: 0;
+    p {
+      border-radius: 50px;
+      margin: 0;
+      font-size: 14px;
+      padding: 8px 16px;
+      background: #33333315;
+      display: block;
+      width: fit-content;
+    }
+  }
+}
+
+.my-message {
+  .ion-label {
+    justify-content: right;
+    p {
+      text-align: right;
+      color: #fff;
+      background: var(--ion-color-primary);
+    }
+  }
+}
+
+.other-message.firstMess {
+  .ion-label {
+    p {
+      border-radius: 50px 50px 50px 0;
+    }
+  }
+}
+.other-message.midMess {
+  .ion-label {
+    p {
+      border-radius: 0 50px 50px 0;
+    }
+  }
+}
+.other-message.lastMess {
+  .ion-label {
+    p {
+      border-radius: 0 50px 50px 50px;
+    }
+  }
+}
+
+.my-message.firstMess {
+  .ion-label {
+    p {
+      border-radius: 50px 50px 0 50px;
+    }
+  }
+}
+.my-message.midMess {
+  .ion-label {
+    p {
+      border-radius: 50px 0 0 50px;
+    }
+  }
+}
+.my-message.lastMess {
+  .ion-label {
+    p {
+      border-radius: 50px 0 50px 50px;
+    }
+  }
+}
+
+.firstMess,
+.midMess,
+.lastMess {
+  margin: 0;
+}
