@@ -3,28 +3,17 @@ import { Injectable } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { StorageService } from "./storage.service";
 import { EventTrackingService } from "./event-tracking.service";
+import { environment } from "src/environments/environment";
 
-type AuthActionType =
-  | "login"
-  | "register"
-  | "getProfile"
-  | "refreshToken"
-  | "resetPassword"
-  | "logout"
-  | "forgotPassword"
-  | "verify";
+type AuthActionType = "login" | "register" | "getProfile" | "refreshToken" | "resetPassword" | "logout" | "forgotPassword" | "verify";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthService {
-  API_SERVER = "http://192.168.1.250:8080/api";
+  API_SERVER = environment.API_SERVER;
 
-  constructor(
-    private http: HttpClient,
-    private storage: StorageService,
-    private eventTrackingService: EventTrackingService
-  ) {}
+  constructor(private http: HttpClient, private storage: StorageService, private eventTrackingService: EventTrackingService) {}
 
   async getAccessToken(): Promise<{
     token: string | null;
@@ -69,11 +58,11 @@ export class AuthService {
       case "refreshToken":
         return await firstValueFrom(this.http.get(`${this.API_SERVER}/refresh-token`));
       case "resetPassword":
-        return firstValueFrom(this.http.post(`${this.API_SERVER}/reset-password`, credentials));
+        return await firstValueFrom(this.http.post(`${this.API_SERVER}/reset-password`, credentials));
       case "logout":
-        return firstValueFrom(this.http.get(`${this.API_SERVER}/logout`));
+        return await firstValueFrom(this.http.get(`${this.API_SERVER}/logout`));
       case "forgotPassword":
-        return firstValueFrom(this.http.post(`${this.API_SERVER}/forgot-password`, credentials));
+        return await firstValueFrom(this.http.post(`${this.API_SERVER}/forgot-password`, credentials));
       default:
         throw new Error("Unknown action type");
     }

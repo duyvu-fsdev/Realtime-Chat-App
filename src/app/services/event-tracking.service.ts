@@ -10,7 +10,6 @@ export class EventTrackingService {
   constructor() {}
 
   publishEvent(data: { Code: string; Value?: any }) {
-    console.log(data.Code);
     this.EventTracking.next(data);
   }
 

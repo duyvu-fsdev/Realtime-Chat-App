@@ -1,0 +1,127 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"> <ion-back-button icon="arrow-back-outline" defaultHref="conversations"></ion-back-button> </ion-buttons>
+    <ion-title>{{ 'New conversation'| translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="container">
+    <div class="listMember scrollable">
+      <span>Chat with:</span>
+      <br />
+      @if(otherMembers.length){ @for (m of otherMembers; track $index) {
+      <ion-chip>
+        <ion-label>{{m.displayName}}</ion-label>
+        <ion-icon name="close" (click)="removeMember(m.id)"></ion-icon>
+      </ion-chip>
+      } }
+    </div>
+    <ion-searchbar
+      #searchbar
+      [autofocus]="true"
+      [(ngModel)]="searchTerm"
+      (ionInput)="filterFriends()"
+      class="searchbar"
+      debounce="500"
+      placeholder="Search user ..."
+    />
+    @if (searchTerm) {
+    <div class="listUser scrollable">
+      <div class="listUser-content">
+        @for (u of filteredUser; track $index) {
+        <ion-chip [color]="u.isOnline ? 'primary':'' " (click)="addMember(u)">
+          <ion-avatar> <img [src]="u.avatar" /> </ion-avatar>
+          <ion-label><strong>{{ u.displayName }}</strong></ion-label>
+        </ion-chip>
+        }@empty {
+        <ion-list lines="none" class="no-results">
+          <ion-item lines="none" color="light"> <ion-label> {{ 'No results' | translate }} </ion-label> </ion-item>
+        </ion-list>
+        }
+      </div>
+    </div>
+    }
+    <!--  -->
+    @if (!searchTerm && members.length) {
+    <div #messagesContainer class="messages scrollable">
+      <div class="thumbnail-container">
+        @if (currentConversation?.chatThumbnail) {
+        <div
+          [ngClass]="{'thumbnail':currentConversation?.chatThumbnail.length ===1,'group-thumbnail':currentConversation?.chatThumbnail.length >1}"
+        >
+          @for (a of currentConversation?.chatThumbnail; track $index) {
+          <ion-avatar>
+            <img [src]="a" />
+          </ion-avatar>
+          }
+        </div>
+        }
+        <ion-title>{{ currentConversation?.name }}</ion-title>
+      </div>
+      @for (m of messages; track $index) {
+      <!--  -->
+      @if ($index === 0 || !isSameDay(messages[$index - 1]?.createdAt, m.createdAt)) {
+      <small class="date-separator">
+        <span> {{ formatDate(m.createdAt) }} </span>
+        <div class="line"></div>
+      </small>
+      }
+      <ion-item
+        lines="none"
+        [ngClass]="{
+              'my-message': m?.senderId === account.currentUser.id,
+              'other-message': m?.senderId !== account.currentUser.id,
+              'first-mess': ($index === 0 || messages[$index - 1]?.senderId !== m?.senderId || !isSameDay(messages[$index - 1]?.createdAt, m.createdAt))
+                            && ($index < messages.length - 1 && messages[$index + 1]?.senderId === m?.senderId && isSameDay(messages[$index + 1]?.createdAt, m.createdAt)),
+              'mid-mess': $index > 0 && messages[$index - 1]?.senderId === m?.senderId && isSameDay(messages[$index - 1]?.createdAt, m.createdAt)
+                           && ($index < messages.length - 1 && messages[$index + 1]?.senderId === m?.senderId && isSameDay(messages[$index + 1]?.createdAt, m.createdAt)),
+              'last-mess': $index > 0 && messages[$index - 1]?.senderId === m?.senderId && isSameDay(messages[$index - 1]?.createdAt, m.createdAt)
+                           && ($index === messages.length - 1 || messages[$index + 1]?.senderId !== m?.senderId || !isSameDay(messages[$index + 1]?.createdAt, m.createdAt))
+            }"
+      >
+        <div class="mess-block">
+          <div class="avatar-block">
+            @if (m?.senderId !== account.currentUser.id && (($index === 0 || messages[$index - 1]?.senderId !== m?.senderId) ||
+            !isSameDay(messages[$index - 1]?.createdAt, m.createdAt))) {
+            <ion-avatar slot="start">
+              <img [src]="m.sender?.avatar" />
+            </ion-avatar>
+            }
+          </div>
+          <div class="mess-content">
+            <div class="ion-label">
+              <p (click)=" toggleMessageInfo($index) ">{{m?.content}}</p>
+            </div>
+            @if ( selectedMessageIndex === $index ) {
+            <small class="message-info" [ngClass]="{'my-message-info':m?.senderId === account.currentUser.id}">
+              <span> @if (currentConversation.isGroup) { {{ m.sender?.displayName }} } {{ formatTime(m.createdAt) }} </span>
+            </small>
+            }
+          </div>
+        </div>
+      </ion-item>
+      }
+    </div>
+    }
+  </div>
+</ion-content>
+@if (!searchTerm && otherMembers.length) {
+<ion-footer>
+  <ion-toolbar class="footer">
+    <ion-item lines="none">
+      <ion-icon name="link-outline"></ion-icon>
+      <ion-textarea
+        [(ngModel)]="newMessage"
+        placeholder="New message"
+        autoGrow="true"
+        [rows]="1"
+        class="custom-textarea"
+        (keydown)="onKeydown($event)"
+      ></ion-textarea>
+      <ion-button [disabled]="!newMessage" (click)="submit()" fill="clear">
+        <ion-icon name="send-sharp"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>
+}

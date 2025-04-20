@@ -6,13 +6,7 @@
       @if (!isReqRegister) {
       <ion-list>
         <ion-item>
-          <ion-input
-            [value]="email"
-            labelPlacement="floating"
-            formControlName="email"
-            type="email"
-            placeholder="youremail@domain.com"
-          >
+          <ion-input [value]="email" labelPlacement="floating" formControlName="email" type="email" placeholder="youremail@domain.com">
             <div slot="label">
               Email @if (isError('email','required')) {
               <ion-text color="danger"> {{'is required'|translate}} </ion-text>
@@ -44,6 +38,7 @@
             type="text"
             placeholder="John"
             value="{{form.value.firstName | titlecase}}"
+            (ngModelChange)="setDisplayName()"
           >
             <div slot="label">
               {{'First name'|translate}} @if (isError('firstName','required')) {
@@ -61,6 +56,7 @@
             type="text"
             placeholder="Smith"
             value="{{form.value.lastName | titlecase}}"
+            (ngModelChange)="setDisplayName()"
           >
             <div slot="label">
               {{'Last name'|translate}} @if (isError('lastName','required')) {
@@ -71,6 +67,26 @@
             </div>
           </ion-input>
         </ion-item>
+
+        @if (form.value.firstName && form.value.lastName) {
+        <ion-item>
+          <ion-select
+            label="{{'Display Name'|translate}}"
+            label-placement="floating"
+            formControlName="displayName"
+            interface="action-sheet"
+            cancelText="{{'Cancel'|translate |titlecase}}"
+          >
+            <ion-select-option [value]="form.value.firstName+ ' ' + form.value.lastName">
+              {{form.value.firstName+ ' ' + form.value.lastName|translate |titlecase}}
+            </ion-select-option>
+            <ion-select-option [value]="form.value.lastName+ ' ' + form.value.firstName">
+              {{form.value.lastName+ ' ' + form.value.firstName|translate |titlecase}}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        }
+
         <ion-item>
           <ion-select
             label="{{'Gender'|translate}}"
@@ -78,7 +94,6 @@
             formControlName="gender"
             interface="action-sheet"
             cancelText="{{'Cancel'|translate |titlecase}}"
-            acc
           >
             <ion-select-option value="male">{{'male'|translate |titlecase}}</ion-select-option>
             <ion-select-option value="female">{{'female'|translate |titlecase}}</ion-select-option>
@@ -106,8 +121,7 @@
             }@else {
             <div slot="label">
               {{'Confirm password'|translate}} @if( isError('confirmPassword','required') ) {
-              <ion-text color="danger"> {{'is required'|translate}} </ion-text> } @else if
-              (isError('confirmPassword','minlength') ) {
+              <ion-text color="danger"> {{'is required'|translate}} </ion-text> } @else if (isError('confirmPassword','minlength') ) {
               <ion-text color="danger"> {{'must be at least 6 characters'|translate}} </ion-text> }
             </div>
             }
@@ -124,9 +138,7 @@
               }
             </div>
           </ion-input>
-          <ion-button (click)="getAnotherOtp()" expand="block" color="tertiary">
-            {{'Get new OTP'|translate}}
-          </ion-button>
+          <ion-button (click)="getAnotherOtp()" expand="block" color="tertiary"> {{'Get new OTP'|translate}} </ion-button>
         </ion-item>
       </ion-list>
       }

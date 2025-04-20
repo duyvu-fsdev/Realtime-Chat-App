@@ -1,0 +1,156 @@
+.main-msg-container {
+  max-width: min(80%, 640px);
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  .main-msg-content {
+    border: 1px solid red;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    background: burlywood;
+    width: fit-content;
+    max-width: 100%;
+    .content {
+      border: 1px solid blue;
+      display: flex;
+      background: orange;
+      border-radius: 10px;
+      align-items: center;
+      width: fit-content;
+      max-width: 100%;
+    }
+    .file-preview {
+      max-width: 100%;
+      width: fit-content;
+      margin: 0;
+    }
+
+    .file-preview.images {
+      // display: grid;
+      // grid-auto-flow: row;
+      // grid-template-columns: repeat(auto-fill, 120px);
+      display: flex;
+      gap: 2px;
+      flex-wrap: wrap;
+      width: fit-content;
+      img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 6px;
+        background: #f3f3f3;
+      }
+    }
+
+    &.video {
+      width: 100%;
+      .content {
+        width: 100%;
+      }
+      .file-preview.video {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background-color: #000;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+
+        video {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          background-color: #000;
+          display: block;
+        }
+      }
+    }
+
+    .file-preview {
+      .other-file {
+        width: fit-content;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+        background: #f3f3f3;
+        border-radius: 10px;
+      }
+    }
+
+    p {
+      padding: 8px 10px;
+      max-width: 100%;
+      margin: 0;
+      border-radius: 10px;
+      font-size: 14px;
+      display: block;
+      width: fit-content;
+      white-space: pre-line;
+    }
+  }
+
+  small.created-at {
+    padding: 5px 10px 8px 10px;
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    span {
+      padding: 1px 2px;
+      width: fit-content;
+      font-size: 10px;
+      color: gray;
+      display: inline-block;
+      width: fit-content;
+      font-weight: 600;
+    }
+  }
+  ion-icon.rep {
+    visibility: hidden;
+    margin: 0 5px;
+    transform: scaleX(-1);
+    color: grey;
+  }
+  &:hover {
+    ion-icon.rep {
+      visibility: visible;
+    }
+  }
+}
+
+.my-message {
+  .main-msg-container {
+    .main-msg-content {
+      .content {
+        flex-flow: row-reverse;
+      }
+      .file-preview {
+      }
+
+      .file-preview.images {
+        img {
+        }
+      }
+
+      .file-preview.video {
+        video {
+        }
+      }
+
+      .file-preview {
+        .other-file {
+        }
+      }
+
+      p {
+      }
+    }
+
+    small.created-at {
+      span {
+      }
+    }
+  }
+}

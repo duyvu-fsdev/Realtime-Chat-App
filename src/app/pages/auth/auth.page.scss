@@ -3,12 +3,17 @@ ion-content {
   --padding-end: 0px;
   --padding-start: 0px;
   --padding-top: 0px;
+  --background: #e9edf0;
 }
 
 .wrap {
   padding: 16px 8px;
   height: 100%;
-  width: 100%;
+  // width: fit-content;
+  min-width: 250px;
+  max-width: 0px;
+  margin: 0 auto;
+  background: #fff;
 }
 
 swiper-container {
@@ -93,8 +98,8 @@ ion-item {
   border-radius: 6px;
   border-width: 1px;
   border-style: solid;
-  border-color: rgba(var(--ion-color-tertiary-rgb), 0.1) rgba(var(--ion-color-tertiary-rgb), 0.5)
-    rgba(var(--ion-color-tertiary-rgb), 0.5) rgba(var(--ion-color-tertiary-rgb), 0.1);
+  border-color: rgba(var(--ion-color-tertiary-rgb), 0.1) rgba(var(--ion-color-tertiary-rgb), 0.5) rgba(var(--ion-color-tertiary-rgb), 0.5)
+    rgba(var(--ion-color-tertiary-rgb), 0.1);
 
   & + ion-item {
     margin-top: 20px;

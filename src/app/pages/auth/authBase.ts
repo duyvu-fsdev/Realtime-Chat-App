@@ -47,7 +47,7 @@ export abstract class AuthBasePage implements OnInit {
   }
   preLoadData() {
     this.returnUrl = this.route.snapshot.queryParams["returnUrl"] || "/conversations";
-    if (this.account.user && this.account.user.id) this.navCtrl.navigateRoot(this.returnUrl);
+    if (this.account.currentUser && this.account.currentUser.id) this.navCtrl.navigateRoot(this.returnUrl);
   }
 
   ngOnInit() {
@@ -62,11 +62,7 @@ export abstract class AuthBasePage implements OnInit {
     const confirmPasswordControl = this.form.get("confirmPassword");
     const passwordErrors = passwordControl?.errors || {};
     const confirmPasswordErrors = confirmPasswordControl?.errors || {};
-    if (
-      passwordControl?.value &&
-      confirmPasswordControl?.value &&
-      passwordControl.value !== confirmPasswordControl.value
-    ) {
+    if (passwordControl?.value && confirmPasswordControl?.value && passwordControl.value !== confirmPasswordControl.value) {
       // passwordErrors['passwordMismatch'] = true;
       confirmPasswordErrors["passwordMismatch"] = true;
     } else {
@@ -84,10 +80,9 @@ export abstract class AuthBasePage implements OnInit {
   async submit() {
     try {
       console.log(this.form.value);
-      const result = await this.loading.showLoadingWithPromise(
-        this.auth.authenticate(this.submitType, this.form.value),
-        { key: "Please wait for a few moments" }
-      );
+      const result = await this.loading.showLoadingWithPromise(this.auth.authenticate(this.submitType, this.form.value), {
+        key: "Please wait for a few moments",
+      });
 
       if (this.submitType === "register") this.onRegisterSuccess({ result, credentials: this.form.value });
       else {

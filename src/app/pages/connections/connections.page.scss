@@ -5,14 +5,25 @@ ion-content {
 
 p {
   font-size: 16px;
-  color: #333;
   cursor: pointer;
 }
+ion-col {
+  padding: 2px;
+}
 
-ion-col ion-card {
-  cursor: pointer;
-  ion-label {
-    margin: 0;
+ion-col ion-chip {
+  border-radius: 10px;
+  padding-inline-start: 24px;
+  padding-inline-end: 24px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  margin: 0;
+  ion-avatar {
+    height: 50px;
+    width: 50px;
+  }
+  &:hover {
+    box-shadow: 1px 1px 2px 0px currentColor;
   }
 }
 

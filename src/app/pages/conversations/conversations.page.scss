@@ -1,0 +1,116 @@
+ion-header {
+  ion-icon {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+ion-content {
+  padding: 16px;
+}
+
+p {
+  font-size: 16px;
+  color: #333;
+}
+
+ion-card {
+  padding: 20px;
+  text-align: center;
+}
+
+small {
+  color: grey;
+}
+
+.fixed-searchbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: white;
+}
+
+.thumb,
+.group-thumb {
+  margin: 2px 10px;
+  width: 45px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  ion-avatar {
+    width: 40px;
+    height: 40px;
+    border: 1px solid transparent;
+  }
+}
+
+.group-thumb {
+  position: relative;
+  ion-avatar {
+    width: 28px;
+    height: 28px;
+    position: absolute;
+  }
+  :nth-child(1) {
+    top: 0;
+    right: 0;
+  }
+  :nth-child(2) {
+    bottom: 0;
+    left: 0;
+    border: 1px solid #fff;
+  }
+}
+//
+
+.first-mess,
+.mid-mess {
+  padding-bottom: 0;
+  border: none;
+}
+
+.mid-mess {
+  padding: 0;
+}
+
+.last-mess {
+  padding-top: 0;
+}
+
+small {
+  span {
+    color: gray;
+    text-align: left;
+    display: inline-block;
+    width: 100%;
+  }
+  // &.my-message-info {
+  //   span {
+  //     color: #fff;
+  //     text-align: right;
+  //   }
+  // }
+}
+
+// ion-popover {
+//   --backdrop-opacity: 0.5;
+//   --background: #3880ff;
+//   --box-shadow: 10px 10px;
+//   --height: 100%;
+//   --max-height: 200px !important;
+//   --max-width: 400px;
+//   --min-height: 100%;
+//   --min-width: 100%;
+//   --width: 100%;
+// }
+// .emoji-picker {
+//   position: absolute;
+//   bottom: 50px; /* hoặc chỉnh theo giao diện bạn */
+//   right: 0;
+//   z-index: 1000;
+//   background: white;
+//   border: 1px solid #ccc;
+//   border-radius: 10px;
+//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+// }

@@ -1,0 +1,223 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"> <ion-back-button icon="arrow-back-outline" defaultHref="conversations"></ion-back-button> </ion-buttons>
+    <ion-title>{{ 'New conversation'| translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="container">
+    <div class="listMember scrollable">
+      <span>Chat with:</span>
+      <br />
+      @if(otherMembers.length){ @for (m of otherMembers; track $index) {
+      <ion-chip>
+        <ion-label>{{m.displayName}}</ion-label>
+        <ion-icon name="close" (click)="removeMember(m.id)"></ion-icon>
+      </ion-chip>
+      } }
+    </div>
+    <ion-searchbar
+      #searchbar
+      [autofocus]="true"
+      [(ngModel)]="searchTerm"
+      (ionInput)="filterFriends()"
+      class="searchbar"
+      debounce="500"
+      placeholder="Search user ..."
+    />
+    @if (searchTerm) {
+    <div class="listUser scrollable">
+      <div class="listUser-content">
+        @for (u of filteredUser; track $index) {
+        <ion-chip [color]="u.isOnline ? 'primary':'' " (click)="addMember(u)">
+          <ion-avatar> <img [src]="u.avatar" /> </ion-avatar>
+          <ion-label><strong>{{ u.displayName }}</strong></ion-label>
+        </ion-chip>
+        }@empty {
+        <ion-list lines="none" class="no-results">
+          <ion-item lines="none" color="light"> <ion-label> {{ 'No results' | translate }} </ion-label> </ion-item>
+        </ion-list>
+        }
+      </div>
+    </div>
+    }
+    <!--  -->
+    @if (!searchTerm && members.length) {
+    <div class="msgs-container">
+      <div #messagesContainer class="msgs scrollable" (scroll)="onScroll()">
+        @if(allMessagesLoaded){
+        <div class="thumbnail-container">
+          @if (currentConversation?.chatThumbnail) {
+          <div class="thumbnail" [ngClass]="{'group-thumbnail':currentConversation?.chatThumbnail.length >1}">
+            @for (a of currentConversation?.chatThumbnail; track $index) {
+            <ion-avatar>
+              <img [src]="a" />
+            </ion-avatar>
+            }
+          </div>
+          }
+          <ion-title>{{ currentConversation?.name }}</ion-title>
+        </div>
+        }
+        <!--  -->
+        @if(!allMessagesLoaded){
+        <div class="msg-loading" [class.active]="isLoadingOldMessages">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+        }
+        <!--  -->
+        @for (m of messages; track m.id; let idx = $index) {
+        <!--  -->
+        @if (idx === 0 || !isSameDay(messages[idx - 1]?.createdAt, m.createdAt)) {
+        <small class="date-separator">
+          <span> {{ formatDate(m.createdAt) }} </span>
+          <div class="line"></div>
+        </small>
+        }
+        <ion-item
+          style="margin-top: 5px"
+          [id]="'msg-' + m.id"
+          lines="none"
+          [ngClass]="{
+              'msg':true,
+              'my-message': m?.senderId === account.currentUser.id,
+              'first-mess': (idx === 0 || messages[idx - 1]?.senderId !== m?.senderId || !isSameDay(messages[idx - 1]?.createdAt, m.createdAt))
+                              && (idx < messages.length - 1 && messages[idx + 1]?.senderId === m?.senderId && isSameDay(messages[idx + 1]?.createdAt, m.createdAt)),
+              'mid-mess': idx > 0 && messages[idx - 1]?.senderId === m?.senderId && isSameDay(messages[idx - 1]?.createdAt, m.createdAt)
+                             && (idx < messages.length - 1 && messages[idx + 1]?.senderId === m?.senderId && isSameDay(messages[idx + 1]?.createdAt, m.createdAt)),
+              'last-mess': idx > 0 && messages[idx - 1]?.senderId === m?.senderId && isSameDay(messages[idx - 1]?.createdAt, m.createdAt)
+                             && (idx === messages.length - 1 || messages[idx + 1]?.senderId !== m?.senderId || !isSameDay(messages[idx + 1]?.createdAt, m.createdAt))
+              }"
+        >
+          <div class="msg-block">
+            @if( m?.senderId !== account.currentUser.id ){
+            <div class="avatar-block">
+              @if ( ((idx === 0 || messages[idx - 1]?.senderId !== m?.senderId) || !isSameDay(messages[idx - 1]?.createdAt, m.createdAt))) {
+              <ion-avatar slot="start">
+                <img loading="lazy" [src]="m.sender?.avatar" />
+              </ion-avatar>
+              }
+            </div>
+            }
+            <div class="msg-container">
+              @if ( currentConversation.isGroup && ( m?.senderId !== account.currentUser.id && ((idx === 0 || messages[idx - 1]?.senderId
+              !== m?.senderId) || !isSameDay(messages[idx - 1]?.createdAt, m.createdAt)))) {
+              <small>
+                <span> @if ( m.senderId != account.currentUser.id) { {{ m.sender?.firstName }} }</span>
+              </small>
+              }
+              <div class="msg-content">
+                @if (m.replyMessageId) {
+                <div class="rep-msg-container">
+                  <small>
+                    <span>
+                      {{m.senderId != account.currentUser.id ? m.sender.firstName : "Bạn"}} đã trả lời {{ m.senderId ==
+                      m.replyMessage.senderId ? "chính mình": m.replyMessage.senderId != account.currentUser.id ?
+                      m.replyMessage.sender.displayName :'bạn'}}
+                    </span>
+                    <ion-icon style="transform: scaleX(-1)" name="arrow-redo-sharp"></ion-icon>
+                  </small>
+                  <div class="rep-msg-content">
+                    @if(m.replyMessage.type === "image"){
+                    <div class="file-preview images">
+                      <ion-icon name="image-outline"></ion-icon>
+                    </div>
+                    }
+                    <!--  -->
+                    @if(m.replyMessage.type === "video"){
+                    <div class="file-preview video">
+                      <ion-icon name="videocam-outline"></ion-icon>
+                    </div>
+                    }
+                    <!--  -->
+                    @if(m.replyMessage.type === "document"){
+                    <div class="file-preview">
+                      <ion-icon name="document-outline"></ion-icon>
+                    </div>
+                    }
+                    <!--  -->
+                    @if (m.replyMessage?.content) {
+                    <p>{{m.replyMessage?.content}}</p>
+                    }
+                  </div>
+                </div>
+                }
+                <div class="main-msg-wrapper">
+                  <div class="main-msg-container" [ngClass]="{'video':m.type === 'video'}">
+                    <div class="main-msg-content">
+                      @if(m.type === "image"){
+                      <div class="file-preview images">
+                        @for (a of m.attachments; track a.id) {
+                        <img loading="lazy" [src]="DOMAIN + a.url" />
+                        }
+                      </div>
+                      }
+                      <!--  -->
+                      @if(m.type === "video"){ @for (a of m.attachments; track a.id) {
+                      <div class="file-preview video">
+                        <video [src]="DOMAIN + a.url" controls (error)="videoOnError($event,a)"></video>
+                      </div>
+                      } }
+                      <!--  -->
+                      @if(m.type === "document"){ @for (a of m.attachments; track a.id) {
+                      <div class="file-preview">
+                        <div class="other-file">
+                          <ion-icon name="document-attach-outline"></ion-icon>
+                          <span>{{ a.originalname }}</span>
+                        </div>
+                      </div>
+                      } }
+                      <!--  -->
+                      @if (m?.content) {
+                      <p (click)=" toggleMessageInfo(idx)">{{m?.content}}</p>
+                      }
+                      <small class="created-at">
+                        <span> {{ formatTime(m.createdAt) }} </span>
+                      </small>
+                    </div>
+                    <ion-icon class="act rep" (click)="setReplyToMessage(m)" name="arrow-redo-sharp"></ion-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ion-item>
+        }
+        <!--  -->
+        @if(isTyping){
+        <small class="typing-block"><span class="typing-indicator">{{ userTyping }} đang nhập...</span></small>
+        }
+      </div>
+
+      @if (showScrollToBottomBtn) {
+      <ion-icon
+        name="arrow-down-outline"
+        class="scroll-to-bottom act"
+        [class.active]="showScrollToBottomBtn"
+        (click)="scrollToBottom(true)"
+      ></ion-icon>
+      }
+    </div>
+    }
+  </div>
+</ion-content>
+@if (!searchTerm && otherMembers.length) {
+<ion-footer>
+  <ion-toolbar class="footer">
+    <ion-item lines="none">
+      <ion-icon name="link-outline"></ion-icon>
+      <ion-textarea
+        [(ngModel)]="newMessage"
+        placeholder="New message"
+        autoGrow="true"
+        [rows]="1"
+        class="custom-textarea"
+        (keydown)="onKeydown($event)"
+      ></ion-textarea>
+      <ion-button [disabled]="!newMessage" (click)="submit()" fill="clear">
+        <ion-icon name="send-sharp"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>
+}

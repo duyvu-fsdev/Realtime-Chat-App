@@ -1,14 +1,40 @@
 import { Component } from "@angular/core";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { ActionSheetButton } from "@ionic/angular";
-
+import { addIcons } from "ionicons";
+import {
+  arrowBackOutline,
+  arrowDownOutline,
+  arrowForwardOutline,
+  arrowRedoSharp,
+  caretBack,
+  chatbubbleEllipses,
+  chatbubblesSharp,
+  chevronBackOutline,
+  chevronDownOutline,
+  chevronUpOutline,
+  close,
+  createOutline,
+  documentAttachOutline,
+  documentOutline,
+  ellipsisHorizontalOutline,
+  ellipsisVertical,
+  imageOutline,
+  linkOutline,
+  peopleSharp,
+  personAdd,
+  sendSharp,
+  transgender,
+  videocamOutline,
+} from "ionicons/icons";
 import { AccountService } from "./services/account.service";
+import { DeviceInfoService } from "./services/device-info.service";
 import { EventTrackingService } from "./services/event-tracking.service";
 import { LanguageService } from "./services/language.service";
 import { LoadingService } from "./services/loading.service";
 import { NotificationService } from "./services/notification.service";
+import { WebsocketService } from "./services/websocket.service";
 import { ComponentsModuleShare } from "./share";
-import { TmpService } from "./services/tmp.service";
 
 @Component({
   selector: "app-root",
@@ -31,8 +57,34 @@ export class AppComponent {
     public account: AccountService,
     private router: Router,
     private notification: NotificationService,
-    private tmp: TmpService
+    private websocket: WebsocketService,
+    public deviceInfo: DeviceInfoService
   ) {
+    addIcons({
+      caretBack,
+      peopleSharp,
+      chevronBackOutline,
+      chatbubblesSharp,
+      linkOutline,
+      arrowBackOutline,
+      ellipsisHorizontalOutline,
+      chatbubbleEllipses,
+      personAdd,
+      ellipsisVertical,
+      transgender,
+      sendSharp,
+      createOutline,
+      close,
+      arrowForwardOutline,
+      chevronUpOutline,
+      chevronDownOutline,
+      arrowRedoSharp,
+      arrowDownOutline,
+      documentAttachOutline,
+      documentOutline,
+      imageOutline,
+      videocamOutline,
+    });
     this.eventTracking.getEvents().subscribe((data: { Code: string; Value?: any }) => {
       switch (data.Code) {
         case "app:changeLanguage":
@@ -48,26 +100,6 @@ export class AppComponent {
       }
     });
     this.init();
-    this.conversations = this.tmp.listConversation.map((conversation) => {
-      if (conversation.isGroup) {
-        return conversation;
-      } else {
-        console.log(this.account.userTest?.id);
-
-        const memberId = this.tmp.litsConversationMember
-          .filter((member) => member.conversationId === conversation.id && member.userId !== this.account.userTest?.id)
-          .map((member) => member.userId)[0];
-        console.log(memberId);
-
-        const member = this.tmp.listUser.find((user) => user.id === memberId);
-        console.log(member);
-
-        return {
-          ...conversation,
-          name: member ? member.name : conversation.name,
-        };
-      }
-    });
   }
 
   async init() {
@@ -75,7 +107,7 @@ export class AppComponent {
     await this.loading.showLoading({ key: "Initializing data..." });
     await this.account.loadSavedData();
     await this.loading.hideLoading();
-    console.log(this.account.user);
+    if (this.account.currentUser?.id) this.websocket.connect();
 
     this.isLoaded = true;
   }
@@ -110,5 +142,17 @@ export class AppComponent {
       this.eventTracking.publishEvent({ Code: "app:changeLanguage", Value: data || "en-US" });
       await this.loading.hideLoading();
     }
+  }
+
+  async logout() {
+    this.account.userLogout();
+  }
+  ngOnDestroy() {
+    this.websocket.disconnect();
+  }
+
+  ngAfterContentChecked() {
+    const element = document.querySelector("#main-content");
+    if (element) element.removeAttribute("aria-hidden");
   }
 }

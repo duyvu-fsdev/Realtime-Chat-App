@@ -9,16 +9,29 @@ import { importProvidersFrom } from "@angular/core";
 import { IonicStorageModule } from "@ionic/storage-angular";
 import { HttpClient, provideHttpClient, withInterceptors } from "@angular/common/http";
 import { authInterceptor } from "./app/interceptors/auth.interceptor";
+import { addIcons } from "ionicons";
+import * as icons from "ionicons/icons";
 
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 export function createTranslateLoader(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient);
 }
 
+// (() => {
+//   const allIcons = Object.entries(icons).reduce((acc: { [key: string]: any }, [key, value]) => {
+//     if (key.endsWith("Outline") || key.endsWith("Sharp")) {
+//       acc[key] = value;
+//     }
+//     return acc;
+//   }, {});
+
+//   addIcons(allIcons);
+// })();
+
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideIonicAngular(),
+    provideIonicAngular({ mode: "md" }),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideTranslateService(),
     provideHttpClient(withInterceptors([authInterceptor])),

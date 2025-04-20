@@ -1,0 +1,313 @@
+<ion-content>
+  <div class="cvs-wrapper" [ngClass]="{'fade-in' :showInfo}">
+    <div class="chat-view" [ngClass]="{'fade-in' :!showInfo,'fade-out':showInfo}">
+      <ion-header>
+        <ion-toolbar class="header">
+          <ion-buttons slot="start">
+            <ion-back-button icon="arrow-back-outline" defaultHref="conversations"></ion-back-button>
+          </ion-buttons>
+          <ion-title>{{ currentConversation?.name }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="toggleShowInfo()"><ion-icon name="ellipsis-vertical"></ion-icon></ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <div class="msgs-container">
+        <div #messagesContainer class="msgs scrollable" (scroll)="onScroll()">
+          @if(allMessagesLoaded){
+          <div class="thumbnail-container">
+            @if (currentConversation?.chatThumbnail) {
+            <div class="thumbnail" [ngClass]="{'group':currentConversation?.chatThumbnail.length >1}">
+              @for (a of currentConversation?.chatThumbnail; track $index) {
+              <ion-avatar>
+                <img [src]="a" />
+              </ion-avatar>
+              }
+            </div>
+            }
+            <ion-title>{{ currentConversation?.name }}</ion-title>
+          </div>
+          }
+          <!--  -->
+          @if(!allMessagesLoaded){
+          <div class="msg-loading" [class.active]="isLoadingOldMessages">
+            <ion-spinner name="crescent"></ion-spinner>
+          </div>
+          }
+          <!--  -->
+          @for (m of messages; track m.id; let idx = $index) {
+          <!--  -->
+          @if (idx === 0 || !isSameDay(messages[idx - 1]?.createdAt, m.createdAt)) {
+          <small class="date-separator">
+            <span> {{ formatDate(m.createdAt) }} </span>
+            <div class="line"></div>
+          </small>
+          }
+          <ion-item
+            style="margin-top: 5px"
+            [id]="'msg-' + m.id"
+            lines="none"
+            [ngClass]="{
+              'msg':true,
+              'my-message': m?.senderId === account.currentUser.id,
+              'first-mess': (idx === 0 || messages[idx - 1]?.senderId !== m?.senderId || !isSameDay(messages[idx - 1]?.createdAt, m.createdAt))
+                              && (idx < messages.length - 1 && messages[idx + 1]?.senderId === m?.senderId && isSameDay(messages[idx + 1]?.createdAt, m.createdAt)),
+              'mid-mess': idx > 0 && messages[idx - 1]?.senderId === m?.senderId && isSameDay(messages[idx - 1]?.createdAt, m.createdAt)
+                             && (idx < messages.length - 1 && messages[idx + 1]?.senderId === m?.senderId && isSameDay(messages[idx + 1]?.createdAt, m.createdAt)),
+              'last-mess': idx > 0 && messages[idx - 1]?.senderId === m?.senderId && isSameDay(messages[idx - 1]?.createdAt, m.createdAt)
+                             && (idx === messages.length - 1 || messages[idx + 1]?.senderId !== m?.senderId || !isSameDay(messages[idx + 1]?.createdAt, m.createdAt))
+              }"
+          >
+            <div class="msg-block">
+              @if( m?.senderId !== account.currentUser.id ){
+              <div class="avatar-block">
+                @if ( ((idx === 0 || messages[idx - 1]?.senderId !== m?.senderId) || !isSameDay(messages[idx - 1]?.createdAt, m.createdAt)))
+                {
+                <ion-avatar slot="start">
+                  <img loading="lazy" [src]="m.sender?.avatar" />
+                </ion-avatar>
+                }
+              </div>
+              }
+              <div class="msg-container">
+                @if ( currentConversation.isGroup && ( m?.senderId !== account.currentUser.id && ((idx === 0 || messages[idx - 1]?.senderId
+                !== m?.senderId) || !isSameDay(messages[idx - 1]?.createdAt, m.createdAt)))) {
+                <small>
+                  <span> @if ( m.senderId != account.currentUser.id) { {{ m.sender?.firstName }} }</span>
+                </small>
+                }
+                <div class="msg-content">
+                  @if (m.replyMessageId) {
+                  <div class="rep-msg-container">
+                    <small>
+                      <span>
+                        {{m.senderId != account.currentUser.id ? m.sender.firstName : "Bạn"}} đã trả lời {{ m.senderId ==
+                        m.replyMessage.senderId ? "chính mình": m.replyMessage.senderId != account.currentUser.id ?
+                        m.replyMessage.sender.displayName :'bạn'}}
+                      </span>
+                      <ion-icon style="transform: scaleX(-1)" name="arrow-redo-sharp"></ion-icon>
+                    </small>
+                    <div class="rep-msg-content">
+                      @if(m.replyMessage.type === "image"){
+                      <div class="file-preview images">
+                        <ion-icon name="image-outline"></ion-icon>
+                      </div>
+                      }
+                      <!--  -->
+                      @if(m.replyMessage.type === "video"){
+                      <div class="file-preview video">
+                        <ion-icon name="videocam-outline"></ion-icon>
+                      </div>
+                      }
+                      <!--  -->
+                      @if(m.replyMessage.type === "document"){
+                      <div class="file-preview">
+                        <ion-icon name="document-outline"></ion-icon>
+                      </div>
+                      }
+                      <!--  -->
+                      @if (m.replyMessage?.content) {
+                      <p>{{m.replyMessage?.content}}</p>
+                      }
+                    </div>
+                  </div>
+                  }
+                  <div class="main-msg-wrapper">
+                    <div class="main-msg-container" [ngClass]="{'video':m.type === 'video'}">
+                      <div class="main-msg-content">
+                        @if(m.type === "image"){
+                        <div
+                          [class]="m.attachments.length===1?'one-image':m.attachments.length===2?'two-images':'multi-images'"
+                          [ngClass]="{'file-preview images':true}"
+                        >
+                          @for (a of m.attachments; track a.id) {
+                          <img loading="lazy" [src]="DOMAIN + a.url" />
+                          }
+                        </div>
+                        }
+                        <!--  -->
+                        @if(m.type === "video"){ @for (a of m.attachments; track a.id) {
+                        <div class="file-preview video">
+                          <video [src]="DOMAIN + a.url" controls (error)="videoOnError($event,a)"></video>
+                        </div>
+                        } }
+                        <!--  -->
+                        @if(m.type === "document"){ @for (a of m.attachments; track a.id) {
+                        <div class="file-preview">
+                          <div class="other-file">
+                            <ion-icon name="document-attach-outline"></ion-icon>
+                            <span>{{ a.originalname }}</span>
+                          </div>
+                        </div>
+                        } }
+                        <!--  -->
+                        @if (m?.content) {
+                        <p (click)=" toggleMessageInfo(idx)">{{m?.content}}</p>
+                        }
+                        <small class="created-at">
+                          <span> {{ formatTime(m.createdAt) }} </span>
+                        </small>
+                      </div>
+                      <ion-icon class="act rep" (click)="setReplyToMessage(m)" name="arrow-redo-sharp"></ion-icon>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ion-item>
+          }
+          <!--  -->
+          @if(isTyping){
+          <small class="typing-block"><span class="typing-indicator">{{ userTyping }} đang nhập...</span></small>
+          }
+        </div>
+
+        @if (showScrollToBottomBtn) {
+        <ion-icon
+          name="arrow-down-outline"
+          class="scroll-to-bottom act"
+          [class.active]="showScrollToBottomBtn"
+          (click)="scrollToBottom(true)"
+        ></ion-icon>
+        }
+        <!--  -->
+        @if(isLoading){
+        <div class="msgs-loading">
+          <ion-spinner name="crescent"> </ion-spinner>
+          <ion-label> loading conversation</ion-label>
+        </div>
+        }
+      </div>
+      <ion-footer>
+        <ion-toolbar class="footer">
+          @if (replyToMessage) {
+          <div class="reply">
+            <div class="reply-content">
+              <p>
+                Đang trả lời @if (replyToMessage?.senderId === account.currentUser.id) { chính mình } @else {
+                {{replyToMessage.sender.displayName}} }
+              </p>
+              <small>
+                <span> {{ replyToMessage.content ?? (replyToMessage.type | titlecase)}} </span>
+              </small>
+            </div>
+            <ion-icon class="act" name="close" (click)="setReplyToMessage(null)"></ion-icon>
+          </div>
+          }
+          <!--  -->
+          @if (attachedFiles.length) {
+          <div class="preview-group">
+            <div class="preview-container scroll-x-able">
+              @for (f of attachedFiles; track $index) {
+              <div class="preview-item">
+                <div class="preview-item-content" [class.other-file]="f.type === 'other'">
+                  @if (f.type === 'image') {
+                  <img loading="lazy" class="item" [src]="f.preview" />
+                  } @if (f.type === 'video') {
+                  <video class="item" [src]="f.preview" controls></video>
+                  } @if (f.type === 'other') {
+                  <div class="item">
+                    <ion-icon name="document-outline"></ion-icon>
+                    <span>{{ f.name }}</span>
+                  </div>
+                  }
+                </div>
+                <ion-icon class="remove-file act" name="close" (click)="removeFile($index)"></ion-icon>
+              </div>
+              }
+            </div>
+            <ion-icon class="act" name="close" (click)="clearAttachedFiles()"></ion-icon>
+          </div>
+          }
+          <ion-item lines="none">
+            <input
+              type="file"
+              accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.mkv"
+              multiple
+              (change)="onFilesSelected($event)"
+              hidden
+              #fileInput
+            />
+
+            <ion-icon class="act" (click)="fileInput.click()" name="link-outline"></ion-icon>
+            <ion-textarea
+              #textarea
+              [(ngModel)]="newMessage"
+              placeholder="New message"
+              autoGrow="true"
+              [rows]="1"
+              class="custom-textarea"
+              (keydown)="onKeydown($event)"
+            ></ion-textarea>
+
+            <ion-button [disabled]="!(newMessage || attachedFiles.length || cleanMsgContent(newMessage))" (click)="submit()" fill="clear">
+              <ion-icon name="send-sharp"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-toolbar>
+      </ion-footer>
+    </div>
+    <div class="info scrollable" [ngClass]="{'fade-in' :showInfo,'fade-out':!showInfo}">
+      <ion-header>
+        <ion-toolbar class="header">
+          <ion-title>Conversation information</ion-title>
+          <ion-buttons slot="end">
+            <ion-button fill="clear" (click)="toggleShowInfo()"><ion-icon name="arrow-forward-outline"></ion-icon></ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-list>
+        <div class="thumbnail-container">
+          @if (currentConversation?.chatThumbnail) {
+          <div
+            [ngClass]="{'thumbnail':currentConversation?.chatThumbnail.length ===1,'group-thumbnail':currentConversation?.chatThumbnail.length >1}"
+          >
+            @for (a of currentConversation?.chatThumbnail; track $index) {
+            <ion-avatar>
+              <img loading="lazy" [src]="a" />
+            </ion-avatar>
+            }
+          </div>
+          }
+          <ion-title>{{ currentConversation?.name }}</ion-title>
+        </div>
+
+        <div class="info-block">
+          @if(currentConversation?.isGroup){
+          <ion-item lines="none" (click)="toggleEx('Customize')" [class.active]="ex === 'Customize'">
+            <ion-label> Customize</ion-label>
+            <ion-icon size="small" [name]="ex=== 'Customize' ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+          </ion-item>
+          <div class="customize" *ngIf="ex === 'Customize'">
+            <div style="display: flex; flex-direction: column; gap: 2px; flex: 1; padding-left: 16px">
+              <ion-label> ✏️ Change name group </ion-label>
+              <ion-label> 🖼️ Change thumbnail</ion-label>
+            </div>
+          </div>
+
+          <ion-item lines="none" (click)="toggleEx('Members')" [class.active]="ex === 'Members'">
+            <ion-label> Members</ion-label>
+            <ion-icon size="small" [name]="ex=== 'Members' ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+          </ion-item>
+          @for (member of currentConversation?.conversationMembers; track $index) {
+          <div class="members" *ngIf="ex === 'Members'">
+            <ion-avatar>
+              <img loading="lazy" [src]="member.avatar" />
+            </ion-avatar>
+            <div style="display: flex; flex-direction: column; gap: 2px; flex: 1">
+              <ion-label>
+                {{ member.displayName }} @if (member.id===account.currentUser.id) {
+                <small style="color: gray">({{'You'|translate}}) </small>
+                }
+              </ion-label>
+              <small style="color: gray">Người tạo nhóm</small>
+            </div>
+            <ion-icon size="small" name="ellipsis-horizontal-outline"></ion-icon>
+          </div>
+          }}
+        </div>
+      </ion-list>
+    </div>
+  </div>
+</ion-content>

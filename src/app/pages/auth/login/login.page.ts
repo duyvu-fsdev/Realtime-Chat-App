@@ -12,7 +12,7 @@ import { AuthBasePage } from "../authBase";
 export class LoginPage extends AuthBasePage {
   initPageDetail() {
     this.form = this.formBuilder.group({
-      email: ["duyvu.fullstackdev@gmail.com", [Validators.required, Validators.email]],
+      email: ["victor@example.com", [Validators.required, Validators.email]],
       password: ["001101", [Validators.required]],
     });
     this.submitType = "login";

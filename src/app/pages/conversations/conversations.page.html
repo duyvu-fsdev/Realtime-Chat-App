@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{ 'Conversations'| translate | titlecase }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [routerLink]="['/conversations/create']" [routerDirection]="'root'"
+        ><ion-icon name="create-outline"></ion-icon
+      ></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if(isLoaded){
+  <ion-list>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label> 👥 Private Conversations </ion-label>
+      </ion-item-divider>
+      @if (privateConversations.length) { @for (conversation of privateConversations; track $index) {
+      <ion-item [routerLink]="['/conversations', conversation.id]" [routerDirection]="'root'">
+        <div class="thumb">
+          <ion-avatar>
+            <img [src]="account.currentUser.avatar" />
+          </ion-avatar>
+        </div>
+        {{ conversation.name }}
+      </ion-item>
+      } }
+    </ion-item-group>
+
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label> 🫂 Group Conversations </ion-label>
+      </ion-item-divider>
+      @if (groupConversations.length) { @for (conversation of groupConversations; track $index) {
+      <ion-item [routerLink]="['/conversations', conversation.id]" [routerDirection]="'root'">
+        <div class="group-thumb">
+          <ion-avatar>
+            <img [src]="conversation?.lastTwoSenders[0]?.avatar" />
+          </ion-avatar>
+          <ion-avatar>
+            <img [src]="conversation?.lastTwoSenders[1]?.avatar" />
+          </ion-avatar>
+        </div>
+        {{ conversation.name }}
+      </ion-item>
+      } }
+    </ion-item-group>
+  </ion-list>
+  @if (!conversations.length) {
+  <ion-card>
+    <p>You have no conversations yet.</p>
+    <ion-button [routerLink]="['/connections']">Start chat</ion-button>
+  </ion-card>
+  } }
+</ion-content>

@@ -1,0 +1,34 @@
+<ion-header>
+  <app-toolbar [title]="user?.displayName" [back]="true" defaultHref="connections"> </app-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card class="main">
+    <ion-card-header>
+      <ion-avatar> <img [src]="user?.avatar" alt="User Avatar" /> </ion-avatar>
+      <ion-card-title>{{ user?.displayName }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button *ngIf="!user?.isFriend" (click)="addFriend(user?.id)">
+        <ion-icon name="person-add"></ion-icon>
+        <p>Thêm bạn bè</p>
+      </ion-button>
+      <ion-button *ngIf="user?.isFriend" disabled>Bạn bè</ion-button>
+      <ion-button (click)="sendMessage()">
+        <ion-icon name="chatbubble-ellipses"></ion-icon>
+        <p>Nhắn tin</p>
+      </ion-button>
+      <ion-button (click)="viewMore()"> <ion-icon name="ellipsis-horizontal-outline"></ion-icon> </ion-button>
+    </ion-card-content>
+  </ion-card>
+  <ion-card class="info">
+    <ion-card-header>
+      <ion-card-title>Chi tiết</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item> <ion-icon name="transgender"></ion-icon> <ion-label>Male</ion-label> </ion-item>
+      <ion-item> <ion-icon name="transgender"></ion-icon> <ion-label>Male</ion-label> </ion-item>
+      <ion-item> <ion-icon name="transgender"></ion-icon> <ion-label>Male</ion-label> </ion-item>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

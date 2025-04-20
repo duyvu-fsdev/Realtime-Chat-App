@@ -10,7 +10,8 @@ import { AuthToolbarComponent } from "./components/auth/auth-toolbar/auth-toolba
 import { BackgroundComponent } from "./components/auth/background/background.component";
 import { RouterModule } from "@angular/router";
 import { AppToolbarComponent } from "./components/app-toolbar/app-toolbar.component";
-
+import { PickerModule } from "@ctrl/ngx-emoji-mart";
+import { EmojiModule } from "@ctrl/ngx-emoji-mart/ngx-emoji";
 export function createTranslateLoader(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient);
 }
@@ -28,6 +29,8 @@ export function createTranslateLoader(httpClient: HttpClient) {
     TranslateDirective,
     RouterModule,
     AppToolbarComponent,
+    PickerModule,
+    EmojiModule,
   ],
   exports: [
     CommonModule,
@@ -41,6 +44,8 @@ export function createTranslateLoader(httpClient: HttpClient) {
     TranslateDirective,
     RouterModule,
     AppToolbarComponent,
+    PickerModule,
+    EmojiModule,
   ],
 })
 export class ComponentsModuleShare {}

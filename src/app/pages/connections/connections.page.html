@@ -1,0 +1,20 @@
+<app-toolbar title="Connections"></app-toolbar>
+<ion-content>
+  <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterFriends()" class="fixed-searchbar" debounce="500"></ion-searchbar>
+  <!-- <ion-item> <ion-label>Friends list</ion-label></ion-item> -->
+  <ion-grid>
+    <ion-row>
+      @for (c of filteredUser; track $index) {
+      <ion-col size="12" size-sm="6" size-md="4" size-xl="3">
+        <ion-chip [color]="c.isOnline ? 'primary':'' " style="width: 100%" (click)="goto(c.id)">
+          <ion-avatar>
+            <img [src]="c.avatar" />
+          </ion-avatar>
+          <ion-label><strong>{{ c.displayName }}</strong></ion-label>
+        </ion-chip>
+      </ion-col>
+      }
+    </ion-row>
+  </ion-grid>
+  <!-- <ion-item> <ion-label>Suggest</ion-label></ion-item> -->
+</ion-content>

@@ -1,17 +1,17 @@
 import { Injectable } from "@angular/core";
 import { Platform } from "@ionic/angular";
-import { StorageService } from "./storage.service";
-import { EventTrackingService } from "./event-tracking.service";
 import { AuthService } from "./auth.service";
-import { TmpService } from "./tmp.service";
+import { EventTrackingService } from "./event-tracking.service";
+import { StorageService } from "./storage.service";
+import { ErrorHandlingService } from "./errorHandling.service";
+import { HttpErrorResponse } from "@angular/common/http";
 declare var window: any;
 
 @Injectable({
   providedIn: "root",
 })
 export class AccountService {
-  user: any;
-  userTest: any;
+  currentUser: any;
   isloaded = false;
   constructor(
     // public commonService: CommonService,
@@ -19,20 +19,16 @@ export class AccountService {
     private storage: StorageService,
     private eventTracking: EventTrackingService,
     private auth: AuthService,
-    private tmp: TmpService
-  ) {
-    this.userTest = this.tmp.listUser[1];
-  }
+    private errorHandling: ErrorHandlingService
+  ) {}
 
   async loadSavedData(forceReload = false) {
     if (this.isloaded && !forceReload) return;
     try {
       await this.getProfile(forceReload);
-      console.log("loadSavedData");
       this.eventTracking.publishEvent({ Code: "app:loadedLocalData" });
       this.isloaded = true;
     } catch (error) {
-      console.log("Error loading saved data:", error);
       throw error;
     }
   }
@@ -40,17 +36,15 @@ export class AccountService {
   // private async lazyProfileCheck() {
   //   try {
   //     const userName = await this.commonService.connect('GET', 'Account/UserName', null).toPromise();
-  //     console.log({ userName });
-
-  //     if (this.user?._id && this.user.email !== userName) {
+  //
+  //     if (this.currentUser?._id && this.currentUser.email !== userName) {
   //       // this.storageService.setStorage('appVersion', '0.0');
   //       // await this.checkVersion();
   //     } else {
   //       setTimeout(async () => {
   //         try {
   //           const a = await this.getProfile(true);
-  //           console.log(a);
-
+  //
   //           this.eventTracking.publishEvent({ Code: 'app:loadedLocalData' });
   //         } catch (error) {
   //           console.error('Error during lazy profile check:', error);
@@ -64,12 +58,12 @@ export class AccountService {
   // }
 
   // private updateWoopraTracking() {
-  //   if (this.envService.user) {
+  //   if (this.envService.currentUser) {
   //     const woopraId = {
-  //       id: this.envService.user.Id,
-  //       email: this.envService.user.Email,
-  //       name: this.envService.user.FullName,
-  //       avatar: this.envService.user.Avatar,
+  //       id: this.envService.currentUser.Id,
+  //       email: this.envService.currentUser.Email,
+  //       name: this.envService.currentUser.FullName,
+  //       avatar: this.envService.currentUser.Avatar,
   //     };
   //     setTimeout(() => {
   //       const woopraInterval = setInterval(() => {
@@ -102,11 +96,10 @@ export class AccountService {
   //         token_type: '',
   //         refresh_token: 'no token',
   //       };
-  //       console.log('checkVersion - clearStorage');
-
+  //
   //       await this.storageService.clearStorage();
   //       await this.storageService.setStorage('UserToken', GlobalData.Token);
-  //       this.envService.user = null;
+  //       this.envService.currentUser = null;
   //       await this.storageService.setStorage('userProfile', null);
   //       await this.storageService.setStorage('appVersion', this.envService.version);
 
@@ -125,7 +118,7 @@ export class AccountService {
 
   // settingList = ['Theme', 'IsCompactMenu', 'IsCacheQuery', 'PinnedForms'];
 
-  // loadUserSettings(settings: any[], profile = this.envService.user) {
+  // loadUserSettings(settings: any[], profile = this.envService.currentUser) {
   //   let userSetting: any = {};
   //   for (let idx = 0; idx < this.settingList.length; idx++) {
   //     const s = this.settingList[idx];
@@ -150,8 +143,6 @@ export class AccountService {
   // }
 
   async getProfile(forceReload = false) {
-    console.log("getProfile");
-
     try {
       if (forceReload) {
         await this.getUserData();
@@ -160,7 +151,10 @@ export class AccountService {
         await this.loadSavedProfile();
       }
     } catch (error) {
-      throw error;
+      if (error instanceof HttpErrorResponse) {
+        this.errorHandling.handleError(error.error?.code);
+      }
+      // throw error;
     }
   }
 
@@ -184,8 +178,8 @@ export class AccountService {
   async loadSavedProfile() {
     try {
       const userProfile = await this.storage.getStorage("userProfile");
-      if (userProfile && userProfile.id) this.user = userProfile;
-      else this.user = null;
+      if (userProfile && userProfile.id) this.currentUser = userProfile;
+      else this.currentUser = null;
       this.eventTracking.publishEvent({ Code: "app:updatedUser" });
     } catch (error) {
       throw error;
@@ -194,7 +188,7 @@ export class AccountService {
 
   async userLogout() {
     try {
-      this.user = null;
+      this.currentUser = null;
       // await this.storage.clearStorage();
       //   await this.storage.setStorage('appVersion', currentVersion);
       await Promise.all([this.auth.setAccessToken(null), this.auth.setRefreshToken(null)]);

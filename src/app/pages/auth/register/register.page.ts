@@ -30,6 +30,7 @@ export class RegisterPage extends AuthBasePage {
       ? this.formBuilder.group({
           firstName: ["", [Validators.required, Validators.maxLength(15)]],
           lastName: ["", [Validators.required, Validators.maxLength(15)]],
+          displayName: ["", [Validators.required]],
           email: [this.email, [Validators.required, Validators.email]],
           gender: ["", [Validators.required]],
           password: ["", [Validators.required, Validators.minLength(6)]],
@@ -55,6 +56,11 @@ export class RegisterPage extends AuthBasePage {
   getAnotherOtp() {
     this.submitType = "verify";
     this.submit();
+  }
+
+  setDisplayName() {
+    this.form.patchValue({ displayName: this.form.value.firstName + " " + this.form.value.lastName });
+    console.log(this.form.value.displayName);
   }
 
   ngOnDestroy(): void {}

@@ -1,0 +1,108 @@
+.fade-in,
+.fade-out {
+  height: 100%;
+  transition: all 0.3s ease-in-out;
+}
+
+.cvs-wrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  .chat-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    &.fade-in {
+      width: 100%;
+    }
+    &.fade-out {
+      width: 0;
+    }
+  }
+}
+
+.info {
+  &.fade-in {
+    width: 100%;
+  }
+  &.fade-out {
+    width: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .cvs-wrapper {
+    &.fade-in {
+      gap: 2px;
+    }
+    .chat-view {
+      border-radius: 60px;
+      &.fade-out {
+        width: calc(100% - 350px);
+      }
+    }
+
+    .info {
+      border-radius: 60px;
+      border-left: 1px solid #33333310;
+      &.fade-in {
+        width: 350px;
+      }
+    }
+  }
+}
+
+.info-block {
+  ion-item {
+    cursor: pointer;
+    --inner-padding-bottom: 2px;
+    --inner-padding-top: 2px;
+    --padding-bottom: 2px;
+    --padding-top: 2px;
+    --min-height: 0px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #33333310;
+
+    &:hover {
+      --background: #33333305;
+    }
+    &.active {
+      --background: #33333315;
+    }
+    ion-label {
+      font-weight: bold;
+      margin: 0;
+    }
+    ion-icon {
+      font-weight: bold;
+    }
+  }
+  .members {
+    display: flex;
+    padding: 0 16px;
+    align-items: center;
+    & + .members {
+      margin-top: 10px;
+    }
+    ion-avatar {
+      margin-right: 10px;
+      width: 35px;
+      height: 35px;
+    }
+    ion-icon {
+      padding: 4px 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      &:hover {
+        background: #33333310;
+        color: var(--ion-color-primary);
+      }
+    }
+  }
+}
+
+.products {
+  padding-left: 16px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
